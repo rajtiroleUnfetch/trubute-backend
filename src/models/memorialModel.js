@@ -8,7 +8,7 @@ const memorialSchema = new mongoose.Schema(
     firstName: { type: String, required: true },
     middleName: { type: String },
     lastName: { type: String, required: true },
-    gender: { type: String },
+    gender: { type: String,reuired:true },
     relationship: { type: String, required: true },
     relationshipOther: { type: String },
     designation: { type: String, required: true },
