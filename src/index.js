@@ -1,13 +1,20 @@
 const express = require("express");
 const dotenv = require("dotenv");
+const cors = require("cors");            // 🔥 ADD THIS
 const connectDB = require("./config/db");
 const userRoutes = require("./routes/userRoutes");
 const memorialRoutes = require("./routes/memorialRoutes");
+
 dotenv.config();
 
 const port = process.env.PORT || 3000;
 
 const app = express();
+
+app.use(cors({ origin: "http://localhost:5173" })); // ✅ Allow frontend
+// OR allow all origins (temporary)
+// app.use(cors());
+
 app.use(express.json());
 
 app.use("/user", userRoutes);
