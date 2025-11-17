@@ -6,14 +6,24 @@ const {
   deleteMemorial,
   approveMemorial,
   getMemorial,
+  updateMemorialImage,
 } = require("../controllers/memorialController.js");
 const authMiddleware = require("../middleware/authMiddleware.js");
 const { addMessage, addMedia } = require("../controllers/tributeController.js");
+const upload = require("../middleware/uploadMedia.js");
 
 const router = express.Router();
 
 router.post("/:id/messages", authMiddleware, addMessage);
 router.post("/:id/media", authMiddleware, addMedia);
+router.post(
+  "/:id/upload-image",
+  authMiddleware,
+  upload.single("media"),       // <--- THIS MUST MATCH
+  updateMemorialImage
+);
+
+
 router.post("/",authMiddleware, createMemorial);
 router.get("/", getMemorials);
 router.get("/:idOrWebsite", getMemorial);

@@ -3,10 +3,23 @@ const mongoose = require("mongoose");
 
 const tributeMessageSchema = new mongoose.Schema(
   {
-    memorialId: { type: mongoose.Schema.Types.ObjectId, ref: "Memorial", required: true },
-    userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    memorialId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Memorial",
+      required: true,
+    },
 
-    message: { type: String, required: true }
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
+
+    message: {
+      type: String,
+      required: true,
+      trim: true
+    }
   },
   { timestamps: true }
 );

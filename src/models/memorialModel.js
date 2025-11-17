@@ -42,6 +42,8 @@ const memorialSchema = new mongoose.Schema(
 
     // Website and Settings
     website: { type: String, required: true },
+    profile:{ type: String},
+    backgroud:{ type: String},
     plan: { type: String, enum: ["Basic", "Premium", "Lifetime"], default: "Basic" },
     privacy: { type: String, enum: ["public", "private"], default: "public" },
 

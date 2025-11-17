@@ -2,6 +2,7 @@ const express = require("express");
 const cors = require("cors");
 const authRoutes = require("./routes/authRoutes");
 const memorialRoutes = require("./routes/memorialRoutes");
+const mediaRoutes = require("./routes/mediaRoutes");
 const { connectDb } = require("./config/database");
 require("dotenv").config();
 
@@ -26,6 +27,7 @@ const startServer = async () => {
   
   //routes
   app.use("/api/memorials", memorialRoutes);
+  app.use("/api/memorial", mediaRoutes);
   app.use("/api/auth", authRoutes);
 
 

@@ -158,3 +158,50 @@ exports.addTribute = async (req, res) => {
   }
 };
 
+
+
+exports.updateMemorialImage = async (req, res) => {
+  try {
+    const memorialId = req.params.id;
+    const userId = req.user.id;
+
+    // Must have uploaded file
+    if (!req.file) {
+      return res.status(400).json({ message: "Image file required" });
+    }
+
+    const imageType = req.body.type; // "hero" | "profile"
+    if (!["hero", "profile"].includes(imageType)) {
+      return res.status(400).json({ message: "Invalid image type" });
+    }
+
+    // Find memorial
+    const memorial = await Memorial.findById(memorialId);
+    if (!memorial) {
+      return res.status(404).json({ message: "Memorial not found" });
+    }
+
+    // Only creator can update
+    if (memorial.createdBy.toString() !== userId) {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+
+    // Update correct field
+    if (imageType === "hero") {
+      memorial.backgroud = req.file.location;  // S3 URL
+    } else {
+      memorial.profile = req.file.location;
+    }
+
+    await memorial.save();
+
+    res.status(200).json({
+      message: "Image updated successfully",
+      memorial,
+    });
+
+  } catch (err) {
+    console.error("Update Error:", err);
+    res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
