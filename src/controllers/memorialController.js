@@ -8,41 +8,17 @@ exports.createMemorial = async (req, res) => {
   try {
     const data = req.body;
 
-    // Validate required fields
-    if (!data.firstName || !data.lastName || !data.relationship || !data.designation || !data.website || !data.createdBy) {
+    // user ID from auth middleware
+    const createdBy = req.user.id;
+
+    // Validate required fields (remove data.createdBy)
+    if (!data.firstName || !data.lastName || !data.relationship || !data.designation || !data.website) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
     const memorial = new Memorial({
-      firstName: data.firstName,
-      middleName: data.middleName || "",
-      lastName: data.lastName,
-      gender: data.gender || "",
-      relationship: data.relationship,
-      relationshipOther: data.relationshipOther || "",
-      designation: data.designation,
-      designationOther: data.designationOther || "",
-      specialDesignation: data.specialDesignation || "",
-      moreDetails: data.moreDetails || "",
-
-      bornYear: data.bornYear || "",
-      bornMonth: data.bornMonth || "",
-      bornDay: data.bornDay || "",
-      bornCity: data.bornCity || "",
-      bornState: data.bornState || "",
-      bornCountry: data.bornCountry || "",
-
-      passedYear: data.passedYear || "",
-      passedMonth: data.passedMonth || "",
-      passedDay: data.passedDay || "",
-      passedCity: data.passedCity || "",
-      passedState: data.passedState || "",
-      passedCountry: data.passedCountry || "",
-
-      website: data.website,
-      plan: data.plan || "Basic",
-      privacy: data.privacy || "public",
-      createdBy: data.createdBy, // usually user._id
+      ...data,
+      createdBy,     // logged-in user ID
       approved: false,
     });
 
@@ -52,11 +28,13 @@ exports.createMemorial = async (req, res) => {
       message: "Memorial submitted for approval",
       memorial,
     });
+
   } catch (err) {
     console.error("❌ Error creating memorial:", err);
     res.status(500).json({ message: "Error creating memorial", error: err.message });
   }
 };
+
 
 
 // 📜 Get all memorials (only approved ones unless ?all=true)
@@ -154,3 +132,29 @@ exports.approveMemorial = async (req, res) => {
     res.status(500).json({ message: "Error approving memorial", error: err.message });
   }
 };
+
+exports.addTribute = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { type, content } = req.body;
+
+    const memorial = await Memorial.findById(id);
+    if (!memorial) return res.status(404).json({ message: "Memorial not found" });
+
+    const tribute = {
+      type,
+      content,
+      addedBy: req.user.id,
+      addedByName: req.user.name,
+    };
+
+    memorial.tributes.push(tribute);
+    await memorial.save();
+
+    res.json({ message: "Tribute added", tribute });
+  } catch (err) {
+    console.error("Error adding tribute:", err);
+    res.status(500).json({ message: "Error adding tribute", error: err.message });
+  }
+};
+

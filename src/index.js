@@ -14,7 +14,7 @@ const startServer = async () => {
   // ✅ Enable CORS
   app.use(
     cors({
-      origin: "http://localhost:3000", // allow frontend
+      origin: process.env.FRONTEND_URI, // allow frontend
       credentials: true, // allow cookies / tokens if needed
       methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
       allowedHeaders: ["Content-Type", "Authorization"],
@@ -27,6 +27,7 @@ const startServer = async () => {
   //routes
   app.use("/api/memorials", memorialRoutes);
   app.use("/api/auth", authRoutes);
+
 
   // ✅ Health Check
   app.get("/health", (req, res) => {

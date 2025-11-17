@@ -1,7 +1,15 @@
 // models/memorialModel.js
 const mongoose = require("mongoose");
 
-
+const tributeSchema = new mongoose.Schema(
+  {
+    type: { type: String, enum: ["text", "photo", "video", "audio"], required: true },
+    content: { type: String, required: true }, // text or media URL
+    addedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    addedByName: { type: String }, // optional display name
+  },
+  { timestamps: true }
+);
 const memorialSchema = new mongoose.Schema(
   {
     // Basic Info
@@ -40,6 +48,7 @@ const memorialSchema = new mongoose.Schema(
     // System fields
     createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     approved: { type: Boolean, default: false },
+    tributes: [tributeSchema],
   },
   { timestamps: true }
 );
