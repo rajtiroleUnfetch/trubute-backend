@@ -3,9 +3,17 @@ const mongoose = require("mongoose");
 
 const tributeSchema = new mongoose.Schema(
   {
-    type: { type: String, enum: ["text", "photo", "video", "audio"], required: true },
+    type: {
+      type: String,
+      enum: ["text", "photo", "video", "audio"],
+      required: true,
+    },
     content: { type: String, required: true }, // text or media URL
-    addedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    addedBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     addedByName: { type: String }, // optional display name
   },
   { timestamps: true }
@@ -23,6 +31,15 @@ const memorialSchema = new mongoose.Schema(
     designationOther: { type: String },
     specialDesignation: { type: String },
     moreDetails: { type: String },
+
+    title: { type: String },
+    description: { type: String },
+    location: { type: String },
+    status: {
+      type: String,
+      enum: ["approved", "pending"],
+      default: "approved",
+    },
 
     // Birth Info
     bornYear: { type: String },
@@ -42,13 +59,21 @@ const memorialSchema = new mongoose.Schema(
 
     // Website and Settings
     website: { type: String, required: true },
-    profile:{ type: String},
-    backgroud:{ type: String},
-    plan: { type: String, enum: ["Basic", "Premium", "Lifetime"], default: "Basic" },
+    profile: { type: String },
+    backgroud: { type: String },
+    plan: {
+      type: String,
+      enum: ["Basic", "Premium", "Lifetime"],
+      default: "Basic",
+    },
     privacy: { type: String, enum: ["public", "private"], default: "public" },
 
     // System fields
-    createdBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    createdBy: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User",
+      required: true,
+    },
     approved: { type: Boolean, default: false },
     tributes: [tributeSchema],
   },
@@ -56,4 +81,3 @@ const memorialSchema = new mongoose.Schema(
 );
 
 module.exports = mongoose.model("Memorial", memorialSchema);
-

@@ -55,23 +55,31 @@ exports.getMemorials = async (req, res) => {
 exports.getMemorial = async (req, res) => {
   try {
     const { idOrWebsite } = req.params;
-
-    // Try finding by MongoDB ObjectId first
     let memorial = null;
+
     if (idOrWebsite.match(/^[0-9a-fA-F]{24}$/)) {
-      memorial = await Memorial.findById(idOrWebsite);
+      memorial = await Memorial.findById(idOrWebsite)
+        .populate("tributes.addedBy", "name email profileImage")
+        .lean();
     }
 
-    // If not found by ID, try by website slug
     if (!memorial) {
-      memorial = await Memorial.findOne({ website: idOrWebsite.toLowerCase() });
+      memorial = await Memorial.findOne({ website: idOrWebsite.toLowerCase() })
+        .populate("tributes.addedBy", "name email profileImage")
+        .lean();
     }
 
     if (!memorial) {
       return res.status(404).json({ message: "Memorial not found" });
     }
 
+    // Sort tributes newest first
+    memorial.tributes = memorial.tributes.sort(
+      (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+    );
+
     res.json({ memorial });
+
   } catch (err) {
     console.error("Error fetching memorial:", err);
     res.status(500).json({
@@ -82,27 +90,23 @@ exports.getMemorial = async (req, res) => {
 };
 
 
-// ✏️ Update memorial (only before approval)
+
 exports.updateMemorial = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { firstName, lastName, description } = req.body;
+    const memorial = await Memorial.findById(req.params.id);
+    if (!memorial) return res.status(404).json({ message: "Not found" });
 
-    const memorial = await Memorial.findById(id);
-    if (!memorial) return res.status(404).json({ message: "Memorial not found" });
-    if (memorial.approved)
-      return res.status(403).json({ message: "Approved memorials cannot be edited" });
+    if (memorial.createdBy.toString() !== req.user._id)
+        return res.status(403).json({ message: "Not allowed" });
 
-    if (firstName) memorial.firstName = firstName;
-    if (lastName) memorial.lastName = lastName;
-    if (description) memorial.description = description;
+    const updated = await Memorial.findByIdAndUpdate(
+        req.params.id,
+        req.body,
+        { new: true }
+    );
 
-    await memorial.save();
-    res.json({ message: "Memorial updated", memorial });
-  } catch (err) {
-    res.status(500).json({ message: "Error updating memorial", error: err.message });
-  }
+    res.json(updated);
 };
+
 
 // 🗑️ Delete memorial (admin or creator)
 exports.deleteMemorial = async (req, res) => {
@@ -203,5 +207,38 @@ exports.updateMemorialImage = async (req, res) => {
   } catch (err) {
     console.error("Update Error:", err);
     res.status(500).json({ message: "Server error", error: err.message });
+  }
+};
+
+
+// 📌 Get Featured Tributes (Home Page)
+exports.getFeaturedTributes = async (req, res) => {
+  try {
+    // Only approved memorials
+    const memorials = await Memorial.find({ approved: false })
+      .select("firstName lastName description address profile backgroud tributes")
+      .limit(8);  // Show 8 items on homepage
+
+    // Format with latest tribute
+    const result = memorials.map((m) => {
+      const latestTribute = m.tributes?.length
+        ? m.tributes[m.tributes.length - 1]
+        : null;
+
+      return {
+        id: m._id,
+        name: `${m.firstName} ${m.lastName}`,
+        description: m.description,
+        address: m.address,
+        profile: m.profile || null,
+        background: m.backgroud || null,
+        latestTribute,
+      };
+    });
+
+    res.json(result);
+  } catch (err) {
+    console.error("Error fetching featured tributes:", err);
+    res.status(500).json({ message: "Server error" });
   }
 };
