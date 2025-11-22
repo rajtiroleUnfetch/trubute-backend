@@ -31,6 +31,10 @@ const startServer = async () => {
   app.use("/api/auth", authRoutes);
 
 
+app.get('/', (req, res) => {
+  res.status(200).send('OK');
+});
+
   // ✅ Health Check
   app.get("/health", (req, res) => {
     return res.status(200).json({
