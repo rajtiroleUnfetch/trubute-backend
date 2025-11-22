@@ -24,16 +24,11 @@ const startServer = async () => {
 
   // ✅ Middleware
   app.use(express.json());
-  
+
   //routes
   app.use("/api/memorials", memorialRoutes);
   app.use("/api/memorial", mediaRoutes);
   app.use("/api/auth", authRoutes);
-
-
-app.get('/', (req, res) => {
-  res.status(200).send('OK');
-});
 
   // ✅ Health Check
   app.get("/health", (req, res) => {
@@ -43,6 +38,9 @@ app.get('/', (req, res) => {
     });
   });
 
+  app.get("/", (req, res) => {
+    res.status(200).send("OK");
+  });
   // ✅ Start server
   app.listen(PORT, () => {
     console.log(`✅ Server running on ${PORT}`);
