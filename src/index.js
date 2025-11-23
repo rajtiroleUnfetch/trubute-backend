@@ -15,7 +15,7 @@ const startServer = async () => {
   // ✅ Enable CORS
   app.use(
     cors({
-      origin: process.env.FRONTEND_URI, // allow frontend
+      origin: 'https://www.trubute.com', // allow frontend
       credentials: true, // allow cookies / tokens if needed
       methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
       allowedHeaders: ["Content-Type", "Authorization"],
