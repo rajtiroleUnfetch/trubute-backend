@@ -1,15 +1,16 @@
-name: Build and Push to Amazon ECR
+name: Build, Push and Deploy to Amazon ECS
 
 on:
   push:
     branches: [ main ]
 
 jobs:
-  build:
+  deploy:
+    name: Build and Deploy
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name: Checkout source
         uses: actions/checkout@v3
 
       - name: Configure AWS credentials
@@ -17,17 +18,32 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          aws-region: us-east-1
 
       - name: Login to Amazon ECR
-        id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      - name: Build, tag, and push image to Amazon ECR
+      - name: Build and push Docker image
         env:
-          ECR_REGISTRY: 453624447939.dkr.ecr.us-east-1.amazonaws.com
-          ECR_REPOSITORY: trubute-backend
-          IMAGE_TAG: latest
+          REGISTRY: 453624447939.dkr.ecr.us-east-1.amazonaws.com
+          REPOSITORY: trubute-backend
+          TAG: latest
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker build -t $REGISTRY/$REPOSITORY:$TAG .
+          docker push $REGISTRY/$REPOSITORY:$TAG
+
+      - name: Render new task definition
+        id: task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: ecs/task-definition.json
+          container-name: trubute-task-container
+          image: 453624447939.dkr.ecr.us-east-1.amazonaws.com/trubute-backend:latest
+
+      - name: Deploy new task definition to ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def.outputs.task-definition }}
+          service: trubute-task-service-6uwrvvq6
+          cluster: trubute-cluster
+          wait-for-service-stability: true

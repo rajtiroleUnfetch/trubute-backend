@@ -1,0 +1,25 @@
+{
+  "family": "trubute-task",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "1024",
+  "memory": "3072",
+  "executionRoleArn": "arn:aws:iam::453624447939:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "name": "trubute-task-container",
+      "image": "PLACEHOLDER",
+      "portMappings": [
+        {
+          "containerPort": 5000,
+          "hostPort": 5000,
+          "protocol": "tcp"
+        }
+      ],
+      "essential": true,
+      "environment": [
+        { "name": "PORT", "value": "5000" }
+      ]
+    }
+  ]
+}
