@@ -33,7 +33,7 @@ const startServer = async () => {
   app.get("/", (req, res) => {
     res.status(200).send("OK");
   });
-  // ✅ Start server
+  // ✅ Start server test
   app.get("/health", (req, res) => {
     res.send("OK");
   });
