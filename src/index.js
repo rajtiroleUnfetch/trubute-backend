@@ -15,7 +15,7 @@ const startServer = async () => {
   // ✅ Enable CORS
   app.use(
     cors({
-      origin: 'https://www.trubute.com', // allow frontend
+      origin: "https://www.trubute.com", // allow frontend
       credentials: true, // allow cookies / tokens if needed
       methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
       allowedHeaders: ["Content-Type", "Authorization"],
@@ -30,14 +30,15 @@ const startServer = async () => {
   app.use("/api/memorial", mediaRoutes);
   app.use("/api/auth", authRoutes);
 
-
-
   app.get("/", (req, res) => {
     res.status(200).send("OK");
   });
   // ✅ Start server
   app.get("/health", (req, res) => {
     res.send("OK");
+  });
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`);
   });
 };
 
