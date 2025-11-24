@@ -30,13 +30,7 @@ const startServer = async () => {
   app.use("/api/memorial", mediaRoutes);
   app.use("/api/auth", authRoutes);
 
-  // ✅ Health Check
-  app.get("/health", (req, res) => {
-    return res.status(200).json({
-      success: true,
-      message: "Server is up and running 🚀",
-    });
-  });
+
 
   app.get("/", (req, res) => {
     res.status(200).send("OK");
