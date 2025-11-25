@@ -52,10 +52,6 @@
                     "value": "5000"
                 },
                 {
-                    "name": "MONGO_URI",
-                    "value": "mongodb+srv://rajtirole:N2xnTp74iSUmCRBE@cluster1.xy31etg.mongodb.net/tribute?retryWrites=true&w=majority&appName=Cluster1"
-                },
-                {
                     "name": "FRONTEND_URI",
                     "value": "https://trubute.com"
                 },
