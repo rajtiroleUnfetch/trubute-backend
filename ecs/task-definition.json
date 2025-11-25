@@ -5,6 +5,7 @@
   "cpu": "1024",
   "memory": "3072",
   "executionRoleArn": "arn:aws:iam::453624447939:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::453624447939:role/ecsTaskRole",
   "containerDefinitions": [
     {
       "name": "trubute-task-container",
