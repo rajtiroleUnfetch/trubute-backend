@@ -1,26 +1,69 @@
 {
-  "family": "trubute-task",
-  "networkMode": "awsvpc",
-  "requiresCompatibilities": ["FARGATE"],
-  "cpu": "1024",
-  "memory": "3072",
-  "executionRoleArn": "arn:aws:iam::453624447939:role/ecsTaskExecutionRole",
-  "taskRoleArn": "arn:aws:iam::453624447939:role/ecsTaskRole",
-  "containerDefinitions": [
-    {
-      "name": "trubute-task-container",
-      "image": "PLACEHOLDER",
-      "portMappings": [
+    "family": "trubute-task",
+    "networkMode": "awsvpc",
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "1024",
+    "memory": "3072",
+    "executionRoleArn": "arn:aws:iam::453624447939:role/ecsTaskExecutionRole",
+    "taskRoleArn": "arn:aws:iam::453624447939:role/ecsTaskRole",
+    "containerDefinitions": [
         {
-          "containerPort": 5000,
-          "hostPort": 5000,
-          "protocol": "tcp"
+            "name": "trubute-task-container",
+            "image": "PLACEHOLDER",
+            "portMappings": [
+                {
+                    "containerPort": 5000,
+                    "hostPort": 5000,
+                    "protocol": "tcp"
+                }
+            ],
+            "essential": true,
+            "secrets": [
+                {
+                    "name": "MONGO_URI",
+                    "valueFrom": "/trubute/MONGO_URI"
+                },
+                {
+                    "name": "JWT_SECRET",
+                    "valueFrom": "/trubute/JWT_SECRET"
+                },
+                {
+                    "name": "AWS_REGION",
+                    "valueFrom": "/trubute/AWS_REGION"
+                },
+                {
+                    "name": "AWS_S3_BUCKET",
+                    "valueFrom": "/trubute/AWS_S3_BUCKET"
+                },
+                {
+                    "name": "AWS_SECRET_ACCESS_KEY",
+                    "valueFrom": "/trubute/AWS_SECRET_ACCESS_KEY"
+                },
+                {
+                    "name": "AWS_ACCESS_KEY_ID",
+                    "valueFrom": "/trubute/AWS_ACCESS_KEY_ID"
+                }
+            ],
+            "environment": [
+                {
+                    "name": "PORT",
+                    "value": "5000"
+                },
+                {
+                    "name": "MONGO_URI",
+                    "value": "mongodb+srv://rajtirole:N2xnTp74iSUmCRBE@cluster1.xy31etg.mongodb.net/tribute?retryWrites=true&w=majority&appName=Cluster1"
+                },
+                {
+                    "name": "FRONTEND_URI",
+                    "value": "https://trubute.com"
+                },
+                {
+                    "name": "JWT_SECRET",
+                    "value": "TRUBUTE_CODE"
+                }
+            ]
         }
-      ],
-      "essential": true,
-      "environment": [
-        { "name": "PORT", "value": "5000" }
-      ]
-    }
-  ]
+    ]
 }

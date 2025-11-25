@@ -5,7 +5,7 @@ require("dotenv").config();
 const upload = multer({
   storage: multerS3({
     s3,
-    bucket: process.env.AWS_S3_BUCKET,   // <-- FIXED (must exist)
+    bucket: 'trubute-data',   // <-- FIXED (must exist)
     metadata: (req, file, cb) => {
       cb(null, { fieldName: file.fieldname });
     },
