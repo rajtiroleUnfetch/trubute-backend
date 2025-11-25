@@ -26,10 +26,6 @@
                     "valueFrom": "/trubute/MONGO_URI"
                 },
                 {
-                    "name": "JWT_SECRET",
-                    "valueFrom": "/trubute/JWT_SECRET"
-                },
-                {
                     "name": "AWS_REGION",
                     "valueFrom": "/trubute/AWS_REGION"
                 },
