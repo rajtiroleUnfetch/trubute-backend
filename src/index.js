@@ -24,12 +24,6 @@ const startServer = async () => {
 
   // ✅ Middleware
   app.use(express.json());
-
-  //routes
-  app.use("/api/memorials", memorialRoutes);
-  app.use("/api/memorial", mediaRoutes);
-  app.use("/api/auth", authRoutes);
-
   app.get("/", (req, res) => {
     res.status(200).send("OK");
   });
@@ -37,6 +31,12 @@ const startServer = async () => {
   app.get("/health", (req, res) => {
     res.status(200).send("OK");
   });
+  //routes
+  app.use("/api/memorials", memorialRoutes);
+  app.use("/api/memorial", mediaRoutes);
+  app.use("/api/auth", authRoutes);
+
+
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });
