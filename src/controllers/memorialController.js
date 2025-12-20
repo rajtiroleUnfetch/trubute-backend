@@ -1,6 +1,6 @@
 // controllers/memorialController.js
 const Memorial = require("../models/memorialModel");
-
+const Payment = require("../models/paymentModel");
 // 🕊️ Create new memorial (requires admin approval)
 // const Memorial = require("../models/Memorial");
 
@@ -11,31 +11,52 @@ exports.createMemorial = async (req, res) => {
     // user ID from auth middleware
     const createdBy = req.user.id;
 
+    // 🔎 Find unused, paid payment
+    const payment = await Payment.findOne({
+      tempMemorialId: data.tempMemorialId,
+      paymentStatus: "paid",
+      isUsed: false,
+    });
+// 9479538338
+    if (!payment) {
+      return res.status(403).json({ message: "Valid payment required" });
+    }
+
     // Validate required fields (remove data.createdBy)
-    if (!data.firstName || !data.lastName || !data.relationship || !data.designation || !data.website) {
+    if (
+      !data.firstName ||
+      !data.lastName ||
+      !data.relationship ||
+      !data.designation ||
+      !data.website
+    ) {
       return res.status(400).json({ message: "Missing required fields" });
     }
 
     const memorial = new Memorial({
       ...data,
-      createdBy,     // logged-in user ID
+      createdBy, // logged-in user ID
       approved: false,
+      plan: payment.planName,
+      paymentStatus: payment.planType === "free" ? "free" : "paid",
     });
 
     await memorial.save();
+
+    payment.isUsed = true;
+    payment.memorialId = memorial._id;
 
     res.status(201).json({
       message: "Memorial submitted for approval",
       memorial,
     });
-
   } catch (err) {
     console.error("❌ Error creating memorial:", err);
-    res.status(500).json({ message: "Error creating memorial", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Error creating memorial", error: err.message });
   }
 };
-
-
 
 // 📜 Get all memorials (only approved ones unless ?all=true)
 exports.getMemorials = async (req, res) => {
@@ -47,7 +68,9 @@ exports.getMemorials = async (req, res) => {
 
     res.json(memorials);
   } catch (err) {
-    res.status(500).json({ message: "Error fetching memorials", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Error fetching memorials", error: err.message });
   }
 };
 
@@ -79,7 +102,6 @@ exports.getMemorial = async (req, res) => {
     );
 
     res.json({ memorial });
-
   } catch (err) {
     console.error("Error fetching memorial:", err);
     res.status(500).json({
@@ -89,35 +111,33 @@ exports.getMemorial = async (req, res) => {
   }
 };
 
-
-
 exports.updateMemorial = async (req, res) => {
-    const memorial = await Memorial.findById(req.params.id);
-    if (!memorial) return res.status(404).json({ message: "Not found" });
+  const memorial = await Memorial.findById(req.params.id);
+  if (!memorial) return res.status(404).json({ message: "Not found" });
 
-    if (memorial.createdBy.toString() !== req.user._id)
-        return res.status(403).json({ message: "Not allowed" });
+  if (memorial.createdBy.toString() !== req.user._id)
+    return res.status(403).json({ message: "Not allowed" });
 
-    const updated = await Memorial.findByIdAndUpdate(
-        req.params.id,
-        req.body,
-        { new: true }
-    );
+  const updated = await Memorial.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+  });
 
-    res.json(updated);
+  res.json(updated);
 };
-
 
 // 🗑️ Delete memorial (admin or creator)
 exports.deleteMemorial = async (req, res) => {
   try {
     const { id } = req.params;
     const memorial = await Memorial.findByIdAndDelete(id);
-    if (!memorial) return res.status(404).json({ message: "Memorial not found" });
+    if (!memorial)
+      return res.status(404).json({ message: "Memorial not found" });
 
     res.json({ message: "Memorial deleted successfully" });
   } catch (err) {
-    res.status(500).json({ message: "Error deleting memorial", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Error deleting memorial", error: err.message });
   }
 };
 
@@ -126,14 +146,17 @@ exports.approveMemorial = async (req, res) => {
   try {
     const { id } = req.params;
     const memorial = await Memorial.findById(id);
-    if (!memorial) return res.status(404).json({ message: "Memorial not found" });
+    if (!memorial)
+      return res.status(404).json({ message: "Memorial not found" });
 
     memorial.approved = true;
     await memorial.save();
 
     res.json({ message: "Memorial approved", memorial });
   } catch (err) {
-    res.status(500).json({ message: "Error approving memorial", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Error approving memorial", error: err.message });
   }
 };
 
@@ -143,7 +166,8 @@ exports.addTribute = async (req, res) => {
     const { type, content } = req.body;
 
     const memorial = await Memorial.findById(id);
-    if (!memorial) return res.status(404).json({ message: "Memorial not found" });
+    if (!memorial)
+      return res.status(404).json({ message: "Memorial not found" });
 
     const tribute = {
       type,
@@ -158,11 +182,11 @@ exports.addTribute = async (req, res) => {
     res.json({ message: "Tribute added", tribute });
   } catch (err) {
     console.error("Error adding tribute:", err);
-    res.status(500).json({ message: "Error adding tribute", error: err.message });
+    res
+      .status(500)
+      .json({ message: "Error adding tribute", error: err.message });
   }
 };
-
-
 
 exports.updateMemorialImage = async (req, res) => {
   try {
@@ -192,7 +216,7 @@ exports.updateMemorialImage = async (req, res) => {
 
     // Update correct field
     if (imageType === "hero") {
-      memorial.backgroud = req.file.location;  // S3 URL
+      memorial.backgroud = req.file.location; // S3 URL
     } else {
       memorial.profile = req.file.location;
     }
@@ -203,21 +227,21 @@ exports.updateMemorialImage = async (req, res) => {
       message: "Image updated successfully",
       memorial,
     });
-
   } catch (err) {
     console.error("Update Error:", err);
     res.status(500).json({ message: "Server error", error: err.message });
   }
 };
 
-
 // 📌 Get Featured Tributes (Home Page)
 exports.getFeaturedTributes = async (req, res) => {
   try {
     // Only approved memorials
     const memorials = await Memorial.find({ approved: false })
-      .select("firstName lastName description address profile backgroud tributes")
-      .limit(8);  // Show 8 items on homepage
+      .select(
+        "firstName lastName description address profile backgroud tributes"
+      )
+      .limit(8); // Show 8 items on homepage
 
     // Format with latest tribute
     const result = memorials.map((m) => {

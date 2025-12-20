@@ -49,6 +49,9 @@ app.get("/health", (req, res) => {
 app.use("/api/memorials", memorialRoutes);
 app.use("/api/memorial", mediaRoutes);
 app.use("/api/auth", authRoutes);
+app.use("/api/payment", require("./routes/paymentRoutes"));
+app.use("/api/payment", require("./routes/paymentVerify"));
+
 
 /* ---------------------------------------------
    ERROR HANDLER — prevents crashes

@@ -66,6 +66,15 @@ const memorialSchema = new mongoose.Schema(
       enum: ["Basic", "Premium", "Lifetime"],
       default: "Basic",
     },
+
+    paymentStatus: {
+      type: String,
+      enum: ["pending", "paid", "free"],
+      default: "pending",
+    },
+    paymentId: String,
+    orderId: String,
+
     privacy: { type: String, enum: ["public", "private"], default: "public" },
 
     // System fields
