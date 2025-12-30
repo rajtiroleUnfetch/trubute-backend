@@ -12,7 +12,7 @@ const paymentSchema = new mongoose.Schema(
 
     planName: {
       type: String,
-      enum: ["Basic", "Premium", "Lifetime"],
+      enum: ["free", "Premium", "Lifetime"],
     },
 
     amount: Number,

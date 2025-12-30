@@ -4,6 +4,7 @@ const authRoutes = require("./routes/authRoutes");
 const memorialRoutes = require("./routes/memorialRoutes");
 const mediaRoutes = require("./routes/mediaRoutes");
 const { connectDb } = require("./config/database");
+const authMiddleware = require("./middleware/authMiddleware");
 require("dotenv").config();
 
 const PORT = process.env.PORT || 5000;
@@ -49,8 +50,9 @@ app.get("/health", (req, res) => {
 app.use("/api/memorials", memorialRoutes);
 app.use("/api/memorial", mediaRoutes);
 app.use("/api/auth", authRoutes);
-app.use("/api/payment", require("./routes/paymentRoutes"));
-app.use("/api/payment", require("./routes/paymentVerify"));
+app.use("/api/payment",authMiddleware
+  , require("./routes/paymentRoutes"));
+app.use("/api/payment",authMiddleware, require("./routes/paymentVerify"));
 
 
 /* ---------------------------------------------

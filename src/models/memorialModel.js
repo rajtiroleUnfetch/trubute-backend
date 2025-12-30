@@ -63,8 +63,8 @@ const memorialSchema = new mongoose.Schema(
     backgroud: { type: String },
     plan: {
       type: String,
-      enum: ["Basic", "Premium", "Lifetime"],
-      default: "Basic",
+      enum: ["free", "Premium", "Lifetime"],
+      default: "free",
     },
 
     paymentStatus: {

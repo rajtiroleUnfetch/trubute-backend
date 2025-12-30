@@ -17,7 +17,6 @@ exports.createMemorial = async (req, res) => {
       paymentStatus: "paid",
       isUsed: false,
     });
-// 9479538338
     if (!payment) {
       return res.status(403).json({ message: "Valid payment required" });
     }
