@@ -44,6 +44,6 @@ jobs:
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: trubute-task-service-6uwrvvq6
-          cluster: trubute-cluster
+          service: node-fargate-task-service-rgji3e4l
+          cluster: node-fargate
           wait-for-service-stability: true
