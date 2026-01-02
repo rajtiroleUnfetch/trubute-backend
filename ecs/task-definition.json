@@ -1,5 +1,5 @@
 {
-    "family": "trubute-task",
+    "family": "node-fargate-task",
     "networkMode": "awsvpc",
     "requiresCompatibilities": [
         "FARGATE"
