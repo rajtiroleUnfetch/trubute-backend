@@ -37,7 +37,7 @@ jobs:
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: ecs/task-definition.json
-          container-name: trubute-task-container
+          container-name: node-app
           image: 453624447939.dkr.ecr.us-east-1.amazonaws.com/trubute-backend:latest
 
       - name: Deploy new task definition to ECS
