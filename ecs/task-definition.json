@@ -10,7 +10,7 @@
     "taskRoleArn": "arn:aws:iam::453624447939:role/ecsTaskRole",
     "containerDefinitions": [
         {
-            "name": "trubute-task-container",
+            "name": "node-app",
             "image": "PLACEHOLDER",
             "portMappings": [
                 {
