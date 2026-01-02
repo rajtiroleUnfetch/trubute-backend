@@ -45,7 +45,7 @@ app.get("/health", (req, res) => {
 });
 
 /* ---------------------------------------------
-   PROTECTED ROUTES (work even if DB is down)
+   PROTECTED ROUTES
 ---------------------------------------------- */
 app.use("/api/memorials", memorialRoutes);
 app.use("/api/memorial", mediaRoutes);

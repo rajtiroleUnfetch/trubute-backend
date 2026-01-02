@@ -40,6 +40,14 @@
                 {
                     "name": "AWS_ACCESS_KEY_ID",
                     "valueFrom": "/trubute/AWS_ACCESS_KEY_ID"
+                },
+                {
+                    "name": "RAZORPAY_KEY_ID",
+                    "valueFrom": "/trubute/RAZORPAY_KEY_ID"
+                },
+                {
+                    "name": "RAZORPAY_KEY_SECRET",
+                    "valueFrom": "/trubute/RAZORPAY_KEY_SECRET"
                 }
             ],
             "environment": [
