@@ -70,7 +70,7 @@ router.post("/create-order", async (req, res) => {
         amount,
         currency: "INR",
         tempMemorialId,
-        key: process.env.RAZORPAY_KEY_ID,
+        // key: process.env.RAZORPAY_KEY_ID,
       });
     }
   } catch (err) {
