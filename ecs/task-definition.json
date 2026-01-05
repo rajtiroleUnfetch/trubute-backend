@@ -1,71 +1,68 @@
 {
-    "family": "node-fargate-task",
-    "networkMode": "awsvpc",
-    "requiresCompatibilities": [
-        "FARGATE"
-    ],
-    "cpu": "1024",
-    "memory": "3072",
-    "executionRoleArn": "arn:aws:iam::453624447939:role/ecsTaskExecutionRole",
-    "taskRoleArn": "arn:aws:iam::453624447939:role/ecsTaskRole",
-    "containerDefinitions": [
+  "family": "node-fargate-task",
+  "networkMode": "awsvpc",
+  "requiresCompatibilities": ["FARGATE"],
+  "cpu": "1024",
+  "memory": "3072",
+  "executionRoleArn": "arn:aws:iam::453624447939:role/ecsTaskExecutionRole",
+  "taskRoleArn": "arn:aws:iam::453624447939:role/ecsTaskRole",
+  "containerDefinitions": [
+    {
+      "name": "node-app",
+      "image": "453624447939.dkr.ecr.us-east-1.amazonaws.com/trubute-backend:latest",
+      "essential": true,
+      "portMappings": [
         {
-            "name": "node-app",
-            "image": "PLACEHOLDER",
-            "portMappings": [
-                {
-                    "containerPort": 5000,
-                    "hostPort": 5000,
-                    "protocol": "tcp"
-                }
-            ],
-            "essential": true,
-            "secrets": [
-                {
-                    "name": "MONGO_URI",
-                    "valueFrom": "/trubute/MONGO_URI"
-                },
-                {
-                    "name": "AWS_REGION",
-                    "valueFrom": "/trubute/AWS_REGION"
-                },
-                {
-                    "name": "AWS_S3_BUCKET",
-                    "valueFrom": "/trubute/AWS_S3_BUCKET"
-                },
-                {
-                    "name": "AWS_SECRET_ACCESS_KEY",
-                    "valueFrom": "/trubute/AWS_SECRET_ACCESS_KEY"
-                },
-                {
-                    "name": "AWS_ACCESS_KEY_ID",
-                    "valueFrom": "/trubute/AWS_ACCESS_KEY_ID"
-                },
-                {
-                    "name": "RAZORPAY_KEY_ID",
-                    "valueFrom": "/trubute/RAZORPAY_KEY_ID"
-                },
-                {
-                    "name": "RAZORPAY_KEY_SECRET",
-                    "valueFrom": "/trubute/RAZORPAY_KEY_SECRET"
-                }
-            ],
-            "environment": [
-                {
-                    "name": "PORT",
-                    "value": "5000"
-                },
-                {
-                    "name": "FRONTEND_URI",
-                    "value": "https://trubute.com"
-                },
-                {
-                    "name": "JWT_SECRET",
-                    "value": "TRUBUTE_CODE"
-                }
-            ]
+          "containerPort": 5000,
+          "hostPort": 5000,
+          "protocol": "tcp",
+          "appProtocol": "http"
         }
-    ]
+      ],
+      "environment": [
+        {
+          "name": "PORT",
+          "value": "5000"
+        },
+        {
+          "name": "FRONTEND_URI",
+          "value": "https://www.trubute.com"
+        },
+        {
+          "name": "AWS_REGION",
+          "value": "us-east-1"
+        },
+        {
+          "name": "AWS_S3_BUCKET",
+          "value": "trubute-data"
+        },
+        {
+          "name": "JWT_SECRET",
+          "value": "TRUBUTE_CODE"
+        }
+      ],
+      "secrets": [
+        {
+          "name": "MONGO_URI",
+          "valueFrom": "/trubute/MONGO_URI"
+        },
+        {
+          "name": "AWS_SECRET_ACCESS_KEY",
+          "valueFrom": "/trubute/AWS_SECRET_ACCESS_KEY"
+        },
+        {
+          "name": "AWS_ACCESS_KEY_ID",
+          "valueFrom": "/trubute/AWS_ACCESS_KEY_ID"
+        },
+        {
+          "name": "RAZORPAY_KEY_ID",
+          "valueFrom": "/trubute/RAZORPAY_KEY_ID"
+        },
+        {
+          "name": "RAZORPAY_KEY_SECRET",
+          "valueFrom": "/trubute/RAZORPAY_KEY_SECRET"
+        }
+      ]
+    }
+  ]
 }
-
-
