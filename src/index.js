@@ -43,6 +43,9 @@ app.get("/", (req, res) => {
 app.get("/health", (req, res) => {
   res.status(200).json({ status: "OK", uptime: process.uptime() });
 });
+app.get("/test", (req, res) => {
+  res.status(200).json({ status: "test", uptime: process.uptime() });
+});
 
 /* ---------------------------------------------
    PROTECTED ROUTES
