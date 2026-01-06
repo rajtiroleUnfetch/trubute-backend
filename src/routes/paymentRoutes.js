@@ -5,6 +5,22 @@ const Payment = require("../models/paymentModel");
 const router = express.Router();
 router.post("/create-order", async (req, res) => {
   try {
+    console.log("=== CREATE ORDER DEBUG START ===");
+
+    console.log("RAZORPAY_KEY_ID:", process.env.RAZORPAY_KEY_ID);
+    console.log(
+      "RAZORPAY_KEY_SECRET exists:",
+      !!process.env.RAZORPAY_KEY_SECRET
+    );
+
+    console.log("Order options:", options);
+
+    console.log("Node version:", process.version);
+
+    console.log("=== BEFORE RAZORPAY CALL ===");
+
+    const order = await razorpay.orders.create(options);
+
     const { planType } = req.body;
     const userId = req.user.id;
     const tempMemorialId = crypto.randomUUID();
@@ -74,8 +90,17 @@ router.post("/create-order", async (req, res) => {
       });
     }
   } catch (err) {
+
+
     console.error(err);
-    res.status(500).json({ message: "Order creation failed test 1" });
+    res
+      .status(500)
+      .json({
+        message: "Order creation failed test 1",
+        razorpay: process.env.RAZORPAY_KEY_ID,
+        err: err,
+        RAZORPAY_KEY_SECRET:!!process.env.RAZORPAY_KEY_SECRET
+      });
   }
 });
 
