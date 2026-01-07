@@ -1,6 +1,7 @@
 const express = require("express");
-const razorpay = require("../config/razorpay");
+const getRazorpay = require("../config/razorpay");
 const Payment = require("../models/paymentModel");
+const razorpay = getRazorpay();
 
 const router = express.Router();
 router.post("/create-order", async (req, res) => {

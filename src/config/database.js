@@ -1,6 +1,9 @@
 // config/database.js
 const mongoose = require("mongoose");
-require("dotenv").config();
+if (process.env.NODE_ENV !== "production") {
+  console.log("prod env")
+  require("dotenv").config();
+}
 const connectDb = async () => {
   try {
     const uri = 'mongodb+srv://rajtirole:N2xnTp74iSUmCRBE@cluster1.xy31etg.mongodb.net/tribute?retryWrites=true&w=majority&appName=Cluster1';

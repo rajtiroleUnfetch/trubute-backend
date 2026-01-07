@@ -1,7 +1,10 @@
 const multer = require("multer");
 const multerS3 = require("multer-s3");
 const s3 = require("../config/s3");
-require("dotenv").config();
+if (process.env.NODE_ENV !== "production") {  
+  console.log("prod env")
+  require("dotenv").config();
+}
 const upload = multer({
   storage: multerS3({
     s3,
