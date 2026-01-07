@@ -13,13 +13,11 @@ router.post("/create-order", async (req, res) => {
       !!process.env.RAZORPAY_KEY_SECRET
     );
 
-    console.log("Order options:", options);
-
     console.log("Node version:", process.version);
 
     console.log("=== BEFORE RAZORPAY CALL ===");
 
-    const order = await razorpay.orders.create(options);
+    // const order = await razorpay.orders.create(options);
 
     const { planType } = req.body;
     const userId = req.user.id;
@@ -69,7 +67,8 @@ router.post("/create-order", async (req, res) => {
         currency: "INR",
         receipt: `trubute_${Date.now()}`,
       });
-
+      // 💳 PAID PLAN — CREATE RAZORPAY ORDER
+      console.log("Creating Razorpay order with amount:", amount);
       await Payment.create({
         orderId: order.id,
         planType,
@@ -86,21 +85,17 @@ router.post("/create-order", async (req, res) => {
         amount,
         currency: "INR",
         tempMemorialId,
-        // key: process.env.RAZORPAY_KEY_ID,
+        key: process.env.RAZORPAY_KEY_ID,
       });
     }
   } catch (err) {
-
-
-    console.error(err);
-    res
-      .status(500)
-      .json({
-        message: "Order creation failed test 1",
-        razorpay: process.env.RAZORPAY_KEY_ID,
-        err: err,
-        RAZORPAY_KEY_SECRET:!!process.env.RAZORPAY_KEY_SECRET
-      });
+    console.error("RAZORPAY ERROR:", err);
+    res.status(500).json({
+      message: "Order creation failed test 1",
+      razorpay: process.env.RAZORPAY_KEY_ID,
+      error: err.message || "Unknown error",
+      RAZORPAY_KEY_SECRET: !!process.env.RAZORPAY_KEY_SECRET,
+    });
   }
 });
 
