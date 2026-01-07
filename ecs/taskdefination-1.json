@@ -1,0 +1,88 @@
+{
+    "family": "node-fargate-task",
+    "networkMode": "awsvpc",
+    "requiresCompatibilities": [
+        "FARGATE"
+    ],
+    "cpu": "256",
+    "memory": "512",
+    "executionRoleArn": "arn:aws:iam::453624447939:role/ecsTaskExecutionRole",
+    "taskRoleArn": "arn:aws:iam::453624447939:role/ecsTaskExecutionRole",
+    "containerDefinitions": [
+        {
+            "name": "node-app",
+            "image": "453624447939.dkr.ecr.us-east-1.amazonaws.com/trubute-backend:latest",
+            "essential": true,
+            "logConfiguration": {
+                "logDriver": "awslogs",
+                "options": {
+                    "awslogs-group": "/ecs/node-fargate-task",
+                    "awslogs-region": "us-east-1",
+                    "awslogs-stream-prefix": "node"
+                }
+            },
+            "portMappings": [
+                {
+                    "containerPort": 5000,
+                    "hostPort": 5000,
+                    "protocol": "tcp",
+                    "appProtocol": "http"
+                }
+            ],
+            "secrets": [
+                {
+                    "name": "RAZORPAY_KEY_ID",
+                    "valueFrom": "/trubute/RAZORPAY_KEY_ID"
+                },
+                {
+                    "name": "NODE_ENV",
+                    "valueFrom": "/trubute/NODE_ENV"
+                },
+                {
+                    "name": "RAZORPAY_KEY_SECRET",
+                    "valueFrom": "/trubute/RAZORPAY_KEY_SECRET"
+                },
+                {
+                    "name": "AWS_S3_BUCKET",
+                    "valueFrom": "/trubute/AWS_S3_BUCKET"
+                },
+                {
+                    "name": "AWS_REGION",
+                    "valueFrom": "/trubute/AWS_REGION"
+                },
+                {
+                    "name": "AWS_SECRET_ACCESS_KEY",
+                    "valueFrom": "/trubute/AWS_SECRET_ACCESS_KEY"
+                },
+                {
+                    "name": "AWS_ACCESS_KEY_ID",
+                    "valueFrom": "/trubute/AWS_ACCESS_KEY_ID"
+                },
+                {
+                    "name": "JWT_SECRET",
+                    "valueFrom": "/trubute/JWT_SECRET"
+                },
+                {
+                    "name": "FRONTEND_URI",
+                    "valueFrom": "/trubute/FRONTEND_URI"
+                },
+                {
+                    "name": "PORT",
+                    "valueFrom": "/trubute/PORT"
+                },
+                {
+                    "name": "MONGO_URI",
+                    "valueFrom": "/trubute/MONGO_URI"
+                }
+            ]
+        },
+        {
+            "name": "aws-otel-collector",
+            "image": "public.ecr.aws/aws-observability/aws-otel-collector:v0.45.1",
+            "essential": true,
+            "command": [
+                "--config=/etc/ecs/ecs-cloudwatch-xray.yaml"
+            ]
+        }
+    ]
+}
