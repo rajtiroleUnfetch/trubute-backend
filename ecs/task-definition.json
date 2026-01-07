@@ -29,32 +29,6 @@
                     "appProtocol": "http"
                 }
             ],
-            "environment": [
-                {
-                    "name": "AWS_REGION",
-                    "value": "us-east-1"
-                },
-                {
-                    "name": "FRONTEND_URI",
-                    "value": "https://www.trubute.com"
-                },
-                {
-                    "name": "AWS_S3_BUCKET",
-                    "value": "trubute-data"
-                },
-                {
-                    "name": "PORT",
-                    "value": "5000"
-                },
-                {
-                    "name": "JWT_SECRET",
-                    "value": "TRUBUTE_CODE"
-                },
-                {
-                    "name": "NODE_ENV",
-                    "value": "production"
-                }
-            ],
             "secrets": [
                 {
                     "name": "RAZORPAY_KEY_ID",
