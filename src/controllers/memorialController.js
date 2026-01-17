@@ -4,6 +4,38 @@ const Payment = require("../models/paymentModel");
 // 🕊️ Create new memorial (requires admin approval)
 // const Memorial = require("../models/Memorial");
 
+const slugify = (text) =>
+  text
+    .toString()
+    .toLowerCase()
+    .trim()
+    .replace(/\s+/g, "-")
+    .replace(/[^\w\-]+/g, "")
+    .replace(/\-\-+/g, "-");
+
+    const generateUniqueWebsite = async (firstName, lastName, bornDay) => {
+  const base = slugify(`${firstName}-${lastName}`);
+  let website = base;
+
+  const exists = async (name) =>
+    await Memorial.exists({ website: name });
+
+  if (!(await exists(website))) return website;
+
+  // add birth year
+  const year = new Date(bornDay).getFullYear();
+  website = `${base}-${year}`;
+  if (!(await exists(website))) return website;
+
+  // fallback counter
+  let counter = 2;
+  while (await exists(`${website}-${counter}`)) {
+    counter++;
+  }
+
+  return `${website}-${counter}`;
+};
+
 exports.createMemorial = async (req, res) => {
   try {
     const data = req.body;
@@ -22,19 +54,33 @@ exports.createMemorial = async (req, res) => {
     }
 
     // Validate required fields (remove data.createdBy)
-    if (
-      !data.firstName ||
-      !data.lastName ||
-      !data.relationship ||
-      !data.designation ||
-      !data.website
-    ) {
-      return res.status(400).json({ message: "Missing required fields" });
+   const requiredFields = [
+      "firstName",
+      "lastName",
+      "relationship",
+      "designation",
+      "bornDay",
+      "passedDay",
+    ];
+
+    for (const field of requiredFields) {
+      if (!data[field]) {
+        return res
+          .status(400)
+          .json({ message: `${field} is required` });
+      }
     }
+
+        const website = await generateUniqueWebsite(
+      data.firstName,
+      data.lastName,
+      data.bornDay
+    );
 
     const memorial = new Memorial({
       ...data,
       createdBy, // logged-in user ID
+       website,
       approved: false,
       plan: payment.planName,
       paymentStatus: payment.planType === "free" ? "free" : "paid",
@@ -74,7 +120,7 @@ exports.getMemorials = async (req, res) => {
 };
 
 // 🔍 Get single memorial by ID
-exports.getMemorial = async (req, res) => {
+exports.getMemorial = async (req, res) => { 
   try {
     const { idOrWebsite } = req.params;
     let memorial = null;
@@ -114,7 +160,7 @@ exports.updateMemorial = async (req, res) => {
   const memorial = await Memorial.findById(req.params.id);
   if (!memorial) return res.status(404).json({ message: "Not found" });
 
-  if (memorial.createdBy.toString() !== req.user._id)
+  if (memorial.createdBy.toString() !== req.user.id)
     return res.status(403).json({ message: "Not allowed" });
 
   const updated = await Memorial.findByIdAndUpdate(req.params.id, req.body, {
@@ -263,5 +309,68 @@ exports.getFeaturedTributes = async (req, res) => {
   } catch (err) {
     console.error("Error fetching featured tributes:", err);
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+// 📌 Get Memorials Created by Logged-in User
+exports.getUserMemorials = async (req, res) => {
+  try {
+    const userId = req.user.id; // set by auth middleware
+
+    const memorials = await Memorial.find({ createdBy: userId })
+      .select(
+        `
+        firstName
+        middleName
+        lastName
+        title
+        description
+        location
+        website
+        profile
+        backgroud
+        status
+        plan
+        paymentStatus
+        privacy
+        tributes
+        createdAt
+        `
+      )
+      .sort({ createdAt: -1 })
+      .lean();
+
+    const result = memorials.map((m) => {
+      const latestTribute =
+        m.tributes && m.tributes.length
+          ? m.tributes[m.tributes.length - 1]
+          : null;
+
+      return {
+        id: m._id,
+        name: `${m.firstName} ${m.middleName || ""} ${m.lastName}`.trim(),
+        title: m.title || null,
+        description: m.description || null,
+        location: m.location || null,
+        website: m.website,
+        profile: m.profile || null,
+        background: m.backgroud || null,
+        status: m.status, // approved | pending
+        plan: m.plan,
+        paymentStatus: m.paymentStatus,
+        privacy: m.privacy,
+        tributesCount: m.tributes?.length || 0,
+        latestTribute,
+        createdAt: m.createdAt
+      };
+    });
+
+    res.json(result);
+  } catch (err) {
+    console.error("Error fetching user memorials:", err);
+    res.status(500).json({
+      message: "Error fetching user memorials",
+      error: err.message
+    });
   }
 };

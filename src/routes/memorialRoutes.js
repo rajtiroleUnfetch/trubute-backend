@@ -8,6 +8,7 @@ const {
   updateMemorialImage,
   getFeaturedTributes,
   updateMemorial,
+  getUserMemorials,
 } = require("../controllers/memorialController.js");
 const authMiddleware = require("../middleware/authMiddleware.js");
 const { addMessage, addMedia } = require("../controllers/tributeController.js");
@@ -32,6 +33,7 @@ router.put("/:id",authMiddleware, updateMemorial);
 router.delete("/:id", authMiddleware,deleteMemorial);
 router.put("/:id/approve",authMiddleware, approveMemorial); // admin-only action
 router.get("/featured/list", getFeaturedTributes);
+router.get("/user-memorials", authMiddleware, getUserMemorials);
 
 
 module.exports = router;
