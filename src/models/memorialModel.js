@@ -58,12 +58,12 @@ const memorialSchema = new mongoose.Schema(
     passedCountry: { type: String },
 
     // Website and Settings
-   website: {
-  type: String,
-  required: true,
-  unique: true,
-  index: true,
-},
+    website: {
+      type: String,
+      required: true,
+      unique: true,
+      index: true,
+    },
 
     profile: { type: String },
     backgroud: { type: String },
@@ -82,7 +82,7 @@ const memorialSchema = new mongoose.Schema(
     orderId: String,
     theme: {
       type: String,
-      enum: ["light", "dark", "pink", "default","blue"],
+      enum: ["light", "dark", "pink", "default", "blue"],
       default: "default",
     },
     privacy: { type: String, enum: ["public", "private"], default: "public" },

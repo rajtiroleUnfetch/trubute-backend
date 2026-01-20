@@ -13,12 +13,11 @@ const slugify = (text) =>
     .replace(/[^\w\-]+/g, "")
     .replace(/\-\-+/g, "-");
 
-    const generateUniqueWebsite = async (firstName, lastName, bornDay) => {
+const generateUniqueWebsite = async (firstName, lastName, bornDay) => {
   const base = slugify(`${firstName}-${lastName}`);
   let website = base;
 
-  const exists = async (name) =>
-    await Memorial.exists({ website: name });
+  const exists = async (name) => await Memorial.exists({ website: name });
 
   if (!(await exists(website))) return website;
 
@@ -54,7 +53,7 @@ exports.createMemorial = async (req, res) => {
     }
 
     // Validate required fields (remove data.createdBy)
-   const requiredFields = [
+    const requiredFields = [
       "firstName",
       "lastName",
       "relationship",
@@ -65,13 +64,11 @@ exports.createMemorial = async (req, res) => {
 
     for (const field of requiredFields) {
       if (!data[field]) {
-        return res
-          .status(400)
-          .json({ message: `${field} is required` });
+        return res.status(400).json({ message: `${field} is required` });
       }
     }
 
-        const website = await generateUniqueWebsite(
+    const website = await generateUniqueWebsite(
       data.firstName,
       data.lastName,
       data.bornDay
@@ -80,7 +77,8 @@ exports.createMemorial = async (req, res) => {
     const memorial = new Memorial({
       ...data,
       createdBy, // logged-in user ID
-       website,
+      website,
+      theme: "pink",
       approved: false,
       plan: payment.planName,
       paymentStatus: payment.planType === "free" ? "free" : "paid",
@@ -120,7 +118,7 @@ exports.getMemorials = async (req, res) => {
 };
 
 // 🔍 Get single memorial by ID
-exports.getMemorial = async (req, res) => { 
+exports.getMemorial = async (req, res) => {
   try {
     const { idOrWebsite } = req.params;
     let memorial = null;
@@ -361,7 +359,7 @@ exports.getUserMemorials = async (req, res) => {
         privacy: m.privacy,
         tributesCount: m.tributes?.length || 0,
         latestTribute,
-        createdAt: m.createdAt
+        createdAt: m.createdAt,
       };
     });
 
@@ -370,7 +368,7 @@ exports.getUserMemorials = async (req, res) => {
     console.error("Error fetching user memorials:", err);
     res.status(500).json({
       message: "Error fetching user memorials",
-      error: err.message
+      error: err.message,
     });
   }
 };
