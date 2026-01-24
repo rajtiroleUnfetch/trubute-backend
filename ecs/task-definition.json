@@ -43,7 +43,9 @@
         { "name": "JWT_SECRET", "valueFrom": "/trubute/JWT_SECRET" },
         { "name": "FRONTEND_URI", "valueFrom": "/trubute/FRONTEND_URI" },
         { "name": "PORT", "valueFrom": "/trubute/PORT" },
-        { "name": "MONGO_URI", "valueFrom": "/trubute/MONGO_URI" }
+        { "name": "MONGO_URI", "valueFrom": "/trubute/MONGO_URI" },
+        { "name": "AWS_ACCESS_KEY_ID_SES", "valueFrom": "/trubute/AWS_ACCESS_KEY_ID_SES" },
+        { "name": "AWS_SECRET_ACCESS_KEY_SES", "valueFrom": "/trubute/AWS_SECRET_ACCESS_KEY_SES" }
       ]
     },
     {
