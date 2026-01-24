@@ -43,7 +43,7 @@
         { "name": "JWT_SECRET", "valueFrom": "/trubute/JWT_SECRET" },
         { "name": "FRONTEND_URI", "valueFrom": "/trubute/FRONTEND_URI" },
         { "name": "PORT", "valueFrom": "/trubute/PORT" },
-        { "name": "MONGO_URI", "valueFrom": "/trubute/MONGO_URI" }
+        { "name": "MONGO_URI", "valueFrom": "/trubute/MONGO_URI" }]
     },
     {
       "name": "aws-otel-collector",
