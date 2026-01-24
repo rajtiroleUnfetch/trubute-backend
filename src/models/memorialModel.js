@@ -82,7 +82,7 @@ const memorialSchema = new mongoose.Schema(
     orderId: String,
     theme: {
       type: String,
-      enum: ["light", "dark", "pink","lightBlue", "default", "blue"],
+      enum: ["light", "dark", "pink", "default", "blue"],
       default: "default",
     },
     privacy: { type: String, enum: ["public", "private"], default: "public" },
