@@ -3,11 +3,13 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const EmailOtp = require("../models/EmailOtp");
-const  ses  = require("../config/ses");
-const axios = require("axios")
+const ses = require("../config/ses");
+const axios = require("axios");
 // 🔐 Generate JWT
 const generateToken = (userId) => {
-  return jwt.sign({ id: userId }, process.env.JWT_SECRET ||'TRUBUTE_CODE', { expiresIn: "24h" });
+  return jwt.sign({ id: userId }, process.env.JWT_SECRET || "TRUBUTE_CODE", {
+    expiresIn: "24h",
+  });
 };
 
 // ------------------------------------
@@ -40,8 +42,6 @@ const generateToken = (userId) => {
 //     res.status(500).json({ message: "Signup failed", error: err.message });
 //   }
 // };
-
-
 
 // exports.signup = async (req, res) => {
 //   try {
@@ -126,7 +126,6 @@ const generateToken = (userId) => {
 //   }
 // };
 
-
 // exports.sendOtp = async (req, res) => {
 //   try {
 //     const { phone } = req.body;
@@ -146,7 +145,6 @@ const generateToken = (userId) => {
 //     });
 //   }
 // };
-
 
 // exports.verifySignupOtp = async (req, res) => {
 //   try {
@@ -187,11 +185,13 @@ const generateToken = (userId) => {
 //   }
 // };
 
-
 exports.signup = async (req, res) => {
   try {
     const { name, email, phone, password, accessToken } = req.body;
-
+// {
+//     "message": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyZXF1ZXN0SWQiOiIzNjYyNzM2OTdhNDczNTM3MzUzMTM4MzMiLCJjb21wYW55SWQiOjQ5MzEwOH0.0B4gD6psRvX3uftJkU9sG-dKI2Ew2oglw-APVzrW1xo",
+//     "type": "success"
+// }
     if (!accessToken) {
       return res.status(400).json({ message: "Mobile verification required" });
     }
@@ -208,7 +208,7 @@ exports.signup = async (req, res) => {
           "Content-Type": "application/json",
           Accept: "application/json",
         },
-      }
+      },
     );
 
     if (response.data.type !== "success") {
@@ -216,9 +216,9 @@ exports.signup = async (req, res) => {
     }
 
     // 🔥 2️⃣ Extra Security Check (IMPORTANT)
-    const verifiedMobile = response.data.mobile;
+    const verifiedMobile = response.data.message;
 
-    if (verifiedMobile !== `91${phone}`) {
+    if (verifiedMobile !== `91${phone}` && verifiedMobile !== phone) {
       return res.status(400).json({
         message: "Mobile number mismatch",
       });
@@ -266,28 +266,27 @@ exports.signup = async (req, res) => {
   }
 };
 
-
-
-exports.testEmail= async (req, res) => {
+exports.testEmail = async (req, res) => {
   try {
-    await ses.sendEmail({
-      Source: "Trubute <info@whaleconsultancy.in>",
-      Destination: { ToAddresses: ["rajtirole23454@email.com"] },
-      Message: {
-        Subject: { Data: "SES Test" },
-        Body: {
-          Text: { Data: "SES is working 🎉" },
+    await ses
+      .sendEmail({
+        Source: "Trubute <info@whaleconsultancy.in>",
+        Destination: { ToAddresses: ["rajtirole23454@email.com"] },
+        Message: {
+          Subject: { Data: "SES Test" },
+          Body: {
+            Text: { Data: "SES is working 🎉" },
+          },
         },
-      },
-    }).promise();
+      })
+      .promise();
 
     res.send("Email sent");
   } catch (err) {
     console.error(err);
     res.status(500).send(err.message);
   }
-}
-
+};
 
 // ------------------------------------
 // ⭐ LOGIN
