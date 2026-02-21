@@ -188,10 +188,6 @@ const generateToken = (userId) => {
 exports.signup = async (req, res) => {
   try {
     const { name, email, phone, password, accessToken } = req.body;
-// {
-//     "message": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJyZXF1ZXN0SWQiOiIzNjYyNzM2OTdhNDczNTM3MzUzMTM4MzMiLCJjb21wYW55SWQiOjQ5MzEwOH0.0B4gD6psRvX3uftJkU9sG-dKI2Ew2oglw-APVzrW1xo",
-//     "type": "success"
-// }
     if (!accessToken) {
       return res.status(400).json({ message: "Mobile verification required" });
     }
