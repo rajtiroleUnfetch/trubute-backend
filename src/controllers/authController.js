@@ -6,6 +6,11 @@ const EmailOtp = require("../models/EmailOtp");
 const ses = require("../config/ses");
 const axios = require("axios");
 // 🔐 Generate JWT
+if (process.env.NODE_ENV !== "production") {
+  console.log("prod env");
+  require("dotenv").config();
+}
+
 const generateToken = (userId) => {
   return jwt.sign({ id: userId }, process.env.JWT_SECRET || "TRUBUTE_CODE", {
     expiresIn: "24h",
@@ -253,12 +258,20 @@ exports.signup = async (req, res) => {
       },
     });
   } catch (err) {
-    console.log(err.response?.data || err.message);
+   console.log(
+  (err && err.response && err.response.data) ||
+  (err && err.message)
+);
 
-    res.status(500).json({
-      message: "Signup failed",
-      error: err.response?.data || err.message,
-    });
+
+   res.status(500).json({
+  message: "Signup failed",
+  error:
+    (err && err.response && err.response.data) ||
+    (err && err.message) ||
+    "Internal Server Error",
+});
+
   }
 };
 
